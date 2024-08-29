@@ -39,7 +39,9 @@ public class CropGallery {
         if (files != null) {
             Arrays.sort(files, new DateDescendingOrder());
             for (File f : files) {
-                images.add(Uri.fromFile(f));
+                if (f.getName().startsWith(CropGallery.CROPPED_IMAGE_NAME)) {
+                    images.add(Uri.fromFile(f));
+                }
             }
         }
         images.addAll(Arrays.asList(
@@ -78,7 +80,7 @@ public class CropGallery {
             } catch (Exception e) {
                 return 1;
             }
-            return timestamp1 > timestamp2 ? -1 : timestamp1 == timestamp2 ? 0 : 1;
+            return Long.compare(timestamp2, timestamp1);
         }
 
         private long tryExtractTimeStamp(String name) {
