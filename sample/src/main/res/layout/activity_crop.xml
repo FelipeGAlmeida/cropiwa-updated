@@ -15,9 +15,19 @@
         <com.steelkiwi.cropiwa.CropIwaView
             android:id="@+id/crop_view"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            app:ci_dynamic_aspect_ratio="false" />
+
+            app:ci_dynamic_aspect_ratio="false"
+            app:ci_scale_enabled="true"
+            app:ci_draw_grid="false"
+            app:ci_aspect_ratio_h="1"
+            app:ci_aspect_ratio_w="1"
+            app:ci_crop_shape="oval"
+            app:ci_translation_enabled="true"
+            app:ci_initial_position="centerInside"
+            app:ci_border_color="#00000000"
+            app:ci_overlay_color="#BB000000"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
