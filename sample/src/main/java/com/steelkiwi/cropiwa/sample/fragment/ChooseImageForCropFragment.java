@@ -13,6 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.steelkiwi.cropiwa.sample.CropActivity;
 import com.steelkiwi.cropiwa.sample.R;
 import com.steelkiwi.cropiwa.sample.util.Permissions;
