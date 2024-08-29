@@ -3,12 +3,9 @@ package com.steelkiwi.cropiwa.sample.fragment;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +16,7 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.steelkiwi.cropiwa.sample.CropActivity;
 import com.steelkiwi.cropiwa.sample.R;
-import com.steelkiwi.cropiwa.sample.util.Permissions;
+import com.steelkiwi.cropiwa.sample.util.PermissionUtil;
 
 import java.util.Locale;
 import java.util.Random;
@@ -32,7 +29,6 @@ import java.util.Random;
 public class ChooseImageForCropFragment extends BottomSheetDialogFragment implements View.OnClickListener {
 
     private static final int REQUEST_CHOOSE_PHOTO = 1101;
-    private static final int REQUEST_STORAGE_PERMISSION = 9;
 
     @Nullable
     @Override
@@ -53,7 +49,7 @@ public class ChooseImageForCropFragment extends BottomSheetDialogFragment implem
                 startCropActivity(getRandomImageUri());
                 break;
             case R.id.btn_from_gallery:
-                startGalleryApp();
+                checkPermissions();
                 break;
         }
     }
@@ -69,28 +65,32 @@ public class ChooseImageForCropFragment extends BottomSheetDialogFragment implem
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_STORAGE_PERMISSION) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startGalleryApp();
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (grantResults.length > 0) {
+            PermissionUtil.processResult(requireActivity(), requestCode, permissions[0]);
         }
     }
 
-    private void startGalleryApp() {
-        if (Permissions.isGranted(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("image/*");
-            intent = Intent.createChooser(intent, getString(R.string.title_choose_image));
-            startActivityForResult(intent, REQUEST_CHOOSE_PHOTO);
-        } else {
-            requestPermissions(
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    REQUEST_STORAGE_PERMISSION);
+    private void checkPermissions() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            if (PermissionUtil.getPermissionStatus(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PermissionUtil.PermissionStatus.GRANTED) {
+                startGalleryApp();
+            } else {
+                PermissionUtil.handlePermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, this::startGalleryApp);
+            }
+            return;
         }
+        startGalleryApp();
+    }
+
+    private void startGalleryApp() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        intent = Intent.createChooser(intent, getString(R.string.title_choose_image));
+        startActivityForResult(intent, REQUEST_CHOOSE_PHOTO);
     }
 
     private Uri getRandomImageUri() {
