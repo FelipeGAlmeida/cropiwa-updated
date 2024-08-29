@@ -2,6 +2,7 @@ package com.steelkiwi.cropiwa.sample;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
@@ -9,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.steelkiwi.cropiwa.AspectRatio;
 
 import com.steelkiwi.cropiwa.CropIwaView;
 import com.steelkiwi.cropiwa.config.CropIwaSaveConfig;
@@ -19,7 +19,7 @@ import java.io.File;
 
 public class CropActivity extends AppCompatActivity {
 
-    private static final String EXTRA_URI = "https://pp.vk.me/c637119/v637119751/248d1/6dd4IPXWwzI.jpg";
+    private static final String EXTRA_URI = "selected_uri";
 
     public static Intent callingIntent(Context context, Uri imageUri) {
         Intent intent = new Intent(context, CropActivity.class);
@@ -28,7 +28,6 @@ public class CropActivity extends AppCompatActivity {
     }
 
     private CropIwaView cropView;
-    private CropViewConfigurator configurator;
 
     @Override
     @SuppressWarnings("ConstantConditions")
@@ -36,13 +35,13 @@ public class CropActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crop);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.title_crop);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Uri imageUri = getIntent().getParcelableExtra(EXTRA_URI);
-        cropView = (CropIwaView) findViewById(R.id.crop_view);
+        cropView = findViewById(R.id.crop_view);
         cropView.setImageUri(imageUri);
     }
 
@@ -55,7 +54,16 @@ public class CropActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.done) {
-            //cropView.crop(configurator.getSelectedSaveConfig());
+            Uri imageUri = getIntent().getParcelableExtra(EXTRA_URI);
+            String randomSuffix = String.valueOf(imageUri.hashCode());
+            File file = new File(App.getInstance().getFilesDir(), CropGallery.CROPPED_IMAGE_NAME + randomSuffix);
+            Uri destination = Uri.fromFile(file);
+            CropIwaSaveConfig cropConfig = new CropIwaSaveConfig.Builder(destination)
+                    .setCompressFormat(Bitmap.CompressFormat.PNG)
+                    .setQuality(100)
+                    .setSize(200, 200)
+                    .build();
+            cropView.crop(cropConfig);
             finish();
         }
         return super.onOptionsItemSelected(item);

@@ -20,6 +20,8 @@ import java.util.Locale;
 
 public class CropGallery {
 
+    public static final String CROPPED_IMAGE_NAME = "cropped";
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void removeFromGallery(Uri uri) {
         if (uri.getScheme().startsWith("file")) {
