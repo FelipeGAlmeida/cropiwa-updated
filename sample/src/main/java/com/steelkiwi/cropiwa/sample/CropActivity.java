@@ -44,10 +44,6 @@ public class CropActivity extends AppCompatActivity {
         Uri imageUri = getIntent().getParcelableExtra(EXTRA_URI);
         cropView = (CropIwaView) findViewById(R.id.crop_view);
         cropView.setImageUri(imageUri);
-
-        MaterialPreferenceScreen cropPrefScreen = (MaterialPreferenceScreen) findViewById(R.id.crop_preference_screen);
-        configurator = new CropViewConfigurator(cropView, cropPrefScreen);
-        cropPrefScreen.setStorageModule(configurator);
     }
 
     @Override
@@ -59,7 +55,7 @@ public class CropActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.done) {
-            cropView.crop(configurator.getSelectedSaveConfig());
+            //cropView.crop(configurator.getSelectedSaveConfig());
             finish();
         }
         return super.onOptionsItemSelected(item);

@@ -13,7 +13,6 @@ import android.view.View;
 import com.steelkiwi.cropiwa.AspectRatio;
 import com.steelkiwi.cropiwa.sample.R;
 import com.steelkiwi.cropiwa.util.ResUtil;
-import com.yarolegovich.mp.util.Utils;
 
 import java.util.Locale;
 
@@ -63,7 +62,8 @@ public class AspectRatioPreviewView extends View {
         rectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         rectPaint.setColor(colorRectNotSelected);
         rectPaint.setStyle(Paint.Style.STROKE);
-        rectPaint.setStrokeWidth(Utils.dpToPixels(getContext(), 2));
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
+        rectPaint.setStrokeWidth(px);
 
         DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -123,7 +123,6 @@ public class AspectRatioPreviewView extends View {
         boolean calculateFromWidth =
                 ratio.getHeight() < ratio.getWidth()
                         || (ratio.isSquare() && freeSpace.width() < freeSpace.height());
-
         float halfWidth, halfHeight;
         if (calculateFromWidth) {
             halfWidth = freeSpace.width() * 0.8f * 0.5f;
