@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin:  'maven-publish'
 
 android {
     compileSdkVersion 34
@@ -23,12 +24,31 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.0'
 }
 
-//publish {
-//    artifactId = 'cropiwa'
-//    userOrg = rootProject.userOrg
-//    groupId = rootProject.groupId
-//    uploadName = rootProject.uploadName
-//    publishVersion = rootProject.publishVersion
-//    description = rootProject.description
-//    licences = rootProject.licences
-//}
+afterEvaluate{
+    publishing{
+        publications{
+            release(MavenPublication){
+                from components.release
+
+                groupId='com.github.'+rootProject.user
+                artifactId = 'cropiwa'
+                version = rootProject.publishVersion
+                pom {
+                    name = 'CropIwa (Updated Android 14+)'
+                    description = rootProject.description
+                    url = 'https://github.com/felipegalmeida/cropiwa-updated'
+                    inceptionYear = '2017'
+                    licenses {
+                        license {
+                            rootProject.licences
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:https://github.com/felipegalmeida/cropiwa-updated.git'
+                        url = 'https://github.com/felipegalmeida/cropiwa-updated'
+                    }
+                }
+            }
+        }
+    }
+}
